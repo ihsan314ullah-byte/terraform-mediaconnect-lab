@@ -1,0 +1,19 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+
+# Terraform State
+*.tfstate
+*.tfstate.backup
+
+# Variable Files
+*.tfvars
+
+# Crash Logs
+crash.log
+
+# VS Code
+.vscode/
+
+# Local Outputs
+outputs-working-single-bitrate.txt
