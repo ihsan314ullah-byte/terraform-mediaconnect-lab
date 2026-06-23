@@ -20,7 +20,7 @@ OBS / FFmpeg SRT Caller
 
        ↓
 
-AWS MediaConnect
+AWS MediaConnect SRT Listener
 
        ↓
 
