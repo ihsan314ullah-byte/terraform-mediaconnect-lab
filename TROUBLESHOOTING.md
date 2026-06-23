@@ -1,8 +1,8 @@
-\# AWS Media Pipeline Terraform Lab - Troubleshooting Notes
+# AWS Media Pipeline Terraform Lab - Troubleshooting Notes
 
 
 
-\## Project Summary
+## Project Summary
 
 
 
@@ -18,21 +18,21 @@ Architecture:
 
 OBS / FFmpeg SRT Caller
 
-&#x20;       ↓
+       ↓
 
 AWS MediaConnect
 
-&#x20;       ↓
+       ↓
 
 AWS MediaLive
 
-&#x20;       ↓
+       ↓
 
 AWS MediaPackage V1
 
-&#x20;       ├── HLS Endpoint (.m3u8)
+      ├── HLS Endpoint (.m3u8)
 
-&#x20;       └── DASH Endpoint (.mpd)
+      └── DASH Endpoint (.mpd)
 
 ```
 
@@ -56,11 +56,11 @@ The final working version includes Adaptive Bitrate Streaming using the followin
 
 
 
-\## Main Challenges Faced
+## Main Challenges Faced
 
 
 
-\### 1. AWS MediaPackage V1 Origin Endpoint Terraform Limitation
+### 1. AWS MediaPackage V1 Origin Endpoint Terraform Limitation
 
 
 
@@ -80,7 +80,7 @@ Invalid resource type: aws\_media\_package\_origin\_endpoint
 
 
 
-\### Solution
+### Solution
 
 
 
@@ -92,11 +92,11 @@ This allowed the full pipeline to remain Infrastructure as Code.
 
 
 
-\---
+---
 
 
 
-\### 2. HLS Worked Before DASH
+### 2. HLS Worked Before DASH
 
 
 
@@ -112,11 +112,11 @@ This reduced troubleshooting complexity.
 
 
 
-\---
+---
 
 
 
-\### 3. Initial ABR Ladder Caused Playback Problems
+### 3. Initial ABR Ladder Caused Playback Problems
 
 
 
@@ -156,7 +156,7 @@ DASH request timeout
 
 
 
-\### Solution
+### Solution
 
 
 
@@ -182,7 +182,7 @@ This stabilized both HLS and DASH playback.
 
 
 
-\---
+---
 
 
 ## Final Working Status
@@ -209,7 +209,7 @@ Terraform IaC       Working
 
 
 
-\## Future Enhancements
+## Future Enhancements
 
 
 
