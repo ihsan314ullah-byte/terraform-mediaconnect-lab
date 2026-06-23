@@ -35,9 +35,8 @@ provider "aws" {
 #############################################
 # Existing MediaLiveAccessRole
 #
-# This is the same IAM role that works when
-# you manually create the MediaLive input
-# from the AWS Console.
+# This is the same IAM role that works when i manually create the MediaLive input
+# from the AWS API Console.
 #############################################
 
 data "aws_iam_role" "medialive_access_role" {
@@ -74,10 +73,8 @@ resource "awscc_mediaconnect_flow" "srt_listener" {
 #     ↓
 # MediaLive Input Type = MEDIACONNECT
 #
-# Important:
-# We use the existing MediaLiveAccessRole
-# because manual AWS Console creation works
-# with this role.
+# Important: use the existing MediaLiveAccessRole
+# because manual AWS API Console creation works with this role.
 #############################################
 
 resource "aws_medialive_input" "mediaconnect_input" {
@@ -91,19 +88,16 @@ resource "aws_medialive_input" "mediaconnect_input" {
 }
 
 #############################################
-# MediaPackage v1 Channel
-#
-# Used because Terraform aws_medialive_channel
-# expects MediaPackage v1 channel_id.
+# MediaPackage V1 Channel
 #############################################
 
 resource "aws_media_package_channel" "mp_v1_channel" {
   channel_id  = "tf-lab-mp-v1-channel"
-  description = "Terraform MediaPackage v1 channel for MediaLive output"
+  description = "MediaPackage V1 channel for Terraform MediaLive HLS and DASH lab"
 }
 
 #############################################
-# MediaLive Channel - Minimal 720p Output
+# MediaLive Channel - ABR Ladder Output
 #############################################
 
 resource "aws_medialive_channel" "channel" {
@@ -153,6 +147,34 @@ resource "aws_medialive_channel" "channel" {
       }
     }
 
+    # 720p60 rendition
+    video_descriptions {
+      name   = "video_720p60"
+      width  = 1920
+      height = 1080
+
+      codec_settings {
+        h264_settings {
+          bitrate               = 4500000
+          framerate_control     = "SPECIFIED"
+          framerate_numerator   = 60
+          framerate_denominator = 1
+          gop_size              = 2
+          gop_size_units        = "SECONDS"
+          profile               = "HIGH"
+          rate_control_mode     = "CBR"
+          scan_type             = "PROGRESSIVE"
+          scene_change_detect   = "ENABLED"
+          timecode_insertion    = "DISABLED"
+
+          par_control     = "SPECIFIED"
+          par_numerator   = 1
+          par_denominator = 1
+        }
+      }
+    }
+
+    # 720p30 rendition
     video_descriptions {
       name   = "video_720p30"
       width  = 1280
@@ -172,7 +194,60 @@ resource "aws_medialive_channel" "channel" {
           scene_change_detect   = "ENABLED"
           timecode_insertion    = "DISABLED"
 
-          # Required for MediaPackage output
+          par_control     = "SPECIFIED"
+          par_numerator   = 1
+          par_denominator = 1
+        }
+      }
+    }
+
+    # 480p rendition
+    video_descriptions {
+      name   = "video_480p30"
+      width  = 854
+      height = 480
+
+      codec_settings {
+        h264_settings {
+          bitrate               = 1500000
+          framerate_control     = "SPECIFIED"
+          framerate_numerator   = 30
+          framerate_denominator = 1
+          gop_size              = 2
+          gop_size_units        = "SECONDS"
+          profile               = "MAIN"
+          rate_control_mode     = "CBR"
+          scan_type             = "PROGRESSIVE"
+          scene_change_detect   = "ENABLED"
+          timecode_insertion    = "DISABLED"
+
+          par_control     = "SPECIFIED"
+          par_numerator   = 1
+          par_denominator = 1
+        }
+      }
+    }
+
+    # 360p rendition
+    video_descriptions {
+      name   = "video_360p30"
+      width  = 640
+      height = 360
+
+      codec_settings {
+        h264_settings {
+          bitrate               = 700000
+          framerate_control     = "SPECIFIED"
+          framerate_numerator   = 30
+          framerate_denominator = 1
+          gop_size              = 2
+          gop_size_units        = "SECONDS"
+          profile               = "MAIN"
+          rate_control_mode     = "CBR"
+          scan_type             = "PROGRESSIVE"
+          scene_change_detect   = "ENABLED"
+          timecode_insertion    = "DISABLED"
+
           par_control     = "SPECIFIED"
           par_numerator   = 1
           par_denominator = 1
@@ -192,8 +267,38 @@ resource "aws_medialive_channel" "channel" {
       }
 
       outputs {
+        output_name             = "emp_720p60"
+        video_description_name  = "video_720p60"
+        audio_description_names = ["audio_1"]
+
+        output_settings {
+          media_package_output_settings {}
+        }
+      }
+
+      outputs {
         output_name             = "emp_720p30"
         video_description_name  = "video_720p30"
+        audio_description_names = ["audio_1"]
+
+        output_settings {
+          media_package_output_settings {}
+        }
+      }
+
+      outputs {
+        output_name             = "emp_480p30"
+        video_description_name  = "video_480p30"
+        audio_description_names = ["audio_1"]
+
+        output_settings {
+          media_package_output_settings {}
+        }
+      }
+
+      outputs {
+        output_name             = "emp_360p30"
+        video_description_name  = "video_360p30"
         audio_description_names = ["audio_1"]
 
         output_settings {
@@ -244,8 +349,7 @@ resource "aws_cloudformation_stack" "mp_v1_hls_endpoint" {
 # We are using AWS Elemental MediaPackage V1. The Terraform AWS provider currently supports the MediaPackage V1
 # channel resource, but the native Terraform origin endpoint resource was not available/supported in our provider setup.
 #
-# Earlier, Terraform returned:
-#   Invalid resource type: aws_media_package_origin_endpoint
+# Earlier, Terraform returned: invalid resource type: aws_media_package_origin_endpoint
 #
 # So instead of manually creating the endpoint in AWS Console, we keep it automated as IaC by embedding an AWS CloudFormation stack inside Terraform.
 #
