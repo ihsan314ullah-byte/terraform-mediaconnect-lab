@@ -1,4 +1,4 @@
-# AWS Media Pipeline Terraform Lab - Troubleshooting Notes
+\# AWS Media Pipeline Terraform Lab - Troubleshooting Notes
 
 
 
@@ -20,7 +20,7 @@ OBS / FFmpeg SRT Caller
 
        ↓
 
-AWS MediaConnect SRT Listener
+AWS MediaConnect
 
        ↓
 
@@ -30,9 +30,9 @@ AWS MediaLive
 
 AWS MediaPackage V1
 
-      ├── HLS Endpoint (.m3u8)
+       ├── HLS Endpoint (.m3u8)
 
-      └── DASH Endpoint (.mpd)
+       └── DASH Endpoint (.mpd)
 
 ```
 
