@@ -17,3 +17,6 @@ crash.log
 
 # Local Outputs
 outputs-working-single-bitrate.txt
+
+# to stop exposing the JWT Secret key
+generated/.env
