@@ -47,7 +47,7 @@ data "aws_iam_role" "medialive_access_role" {
 # AWS MediaConnect Flow
 #
 # Architecture:
-# OBS / FFmpeg SRT Caller
+# FFmpeg SRT Caller
 #     ↓
 # MediaConnect SRT Listener Flow
 #############################################
@@ -57,7 +57,7 @@ resource "awscc_mediaconnect_flow" "srt_listener" {
 
   source = {
     name           = "srt-listener-source"
-    description    = "OBS SRT caller input into MediaConnect"
+    description    = "SRT caller input into MediaConnect"
     protocol       = "srt-listener"
     ingest_port    = var.srt_port
     min_latency    = 2000
@@ -78,7 +78,7 @@ resource "awscc_mediaconnect_flow" "srt_listener" {
 #############################################
 
 resource "aws_medialive_input" "mediaconnect_input" {
-  name     = "obs-mediaconnect-input"
+  name     = "tf-mc-ml-input"
   type     = "MEDIACONNECT"
   role_arn = data.aws_iam_role.medialive_access_role.arn
 
@@ -92,8 +92,8 @@ resource "aws_medialive_input" "mediaconnect_input" {
 #############################################
 
 resource "aws_media_package_channel" "mp_v1_channel" {
-  channel_id  = "tf-lab-mp-v1-channel"
-  description = "MediaPackage V1 channel for Terraform MediaLive HLS and DASH lab"
+  channel_id  = "tf-mp-v1-channel"
+  description = "MediaPackage V1 channel for HLS and DASH endpoints"
 }
 
 #############################################
@@ -101,7 +101,7 @@ resource "aws_media_package_channel" "mp_v1_channel" {
 #############################################
 
 resource "aws_medialive_channel" "channel" {
-  name          = "tf-lab-medialive-channel"
+  name          = "tf-medialive-channel"
   channel_class = "SINGLE_PIPELINE"
   role_arn      = data.aws_iam_role.medialive_access_role.arn
 
@@ -319,7 +319,7 @@ resource "aws_medialive_channel" "channel" {
 # through cloudformation as Terraform provider doesn't support AWS and AWSCC mediapackag v1 endpoint
 #############################################
 resource "aws_cloudformation_stack" "mp_v1_hls_endpoint" {
-  name = "tf-lab-mp-v1-hls-endpoint"
+  name = "tf-mediapackage-v1-hls-endpoint"
 
   template_body = jsonencode({
     AWSTemplateFormatVersion = "2010-09-09"
@@ -327,8 +327,9 @@ resource "aws_cloudformation_stack" "mp_v1_hls_endpoint" {
       HlsEndpoint = {
         Type = "AWS::MediaPackage::OriginEndpoint"
         Properties = {
-          Id        = "hls"
-          ChannelId = aws_media_package_channel.mp_v1_channel.id
+          Id          = "tf-v1-hls-endpoint"
+          ChannelId   = aws_media_package_channel.mp_v1_channel.id
+          Description = "HLS endpoint for tf-mp v1"
 
           HlsPackage = {
             SegmentDurationSeconds = 6
@@ -338,6 +339,14 @@ resource "aws_cloudformation_stack" "mp_v1_hls_endpoint" {
         }
       }
     }
+
+    Outputs = {
+      HlsEndpointUrl = {
+        Description = "MediaPackage V1 HLS endpoint URL"
+        Value       = { "Fn::GetAtt" = ["HlsEndpoint", "Url"] }
+      }
+    }
+
   })
 }
 
@@ -373,7 +382,7 @@ resource "aws_cloudformation_stack" "mp_v1_dash_endpoint" {
           Id        = "tf-v1-dash-endpoint"
           ChannelId = aws_media_package_channel.mp_v1_channel.id
 
-          Description  = "DASH endpoint for Terraform MediaPackage V1 lab"
+          Description  = "DASH endpoint for tf-mp v1"
           ManifestName = "index"
 
           DashPackage = {
