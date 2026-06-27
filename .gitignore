@@ -19,4 +19,8 @@ crash.log
 outputs-working-single-bitrate.txt
 
 # to stop exposing the JWT Secret key
-generated/.env
+# Generated runtime configuration
+generated/
+
+# Local Terraform outputs
+outputs-working-single-bitrate.txt
