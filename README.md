@@ -11,49 +11,37 @@ Architecture:
 FFmpeg-SRT-Caller -> MediaConnect-SRT-Listener -> MediaLive -> MediaPackage V1 -> HLS(.m3u8)/DASH(.mpd) ABR Endpoints
 
 ## Companion Repository
-This repository provisions the AWS infrastructure.
+This repository provisions the AWS Media Services infrastructure.
 
 The runtime and observability components are maintained separately in: https://github.com/ihsan314ullah-byte/aws-media-pipeline-observability/tree/main
 
 
 ### The deployment workflow is:
 
-    Terraform
-        │
-        ▼
-Provision AWS Media Services
-        │
-        ▼
-Generate runtime .env
-        │
-        ▼
-Copy .env to EC2
-        │
-        ▼
-Start runtime services
+    Terraform -> Provision AWS Media Services -> Generate runtime .env -> Copy .env to EC2 -> Start runtime services
 
 ### Repository Responsibilities
 
 This repository handles:
 
-✓ MediaConnect
-✓ MediaLive
-✓ MediaPackage
-✓ IAM
-✓ CloudFormation
-✓ Terraform Outputs
-✓ Runtime .env generation
+MediaConnect
+MediaLive
+MediaPackage
+IAM
+CloudFormation
+Terraform Outputs
+Runtime .env generation
 
 Companion repository handles:
 
-✓ FFmpeg
-✓ FastAPI
-✓ Docker
-✓ Prometheus
-✓ Grafana
-✓ CloudWatch
-✓ JWT
-✓ Role Based Authentication-RBAC
+FFmpeg
+FastAPI
+Docker
+Prometheus
+Grafana
+CloudWatch
+JWT
+Role Based Authentication-RBAC
 
 ## Features
 
@@ -67,17 +55,14 @@ Companion repository handles:
 
 ## Current Working Status 
 
-- MediaConnect Flow          ✓
-- MediaLive Input            ✓
-- MediaLive Channel          ✓
-- MediaPackage Channel       ✓
-- HLS ABR Playback           ✓
-- DASH ABR Playback          ✓
+- MediaConnect Flow          
+- MediaLive Input            
+- MediaLive Channel          
+- MediaPackage Channel       
+- HLS ABR Playback           
+- DASH ABR Playback          
 
 ## Demo Workflow
-
-This Terraform project provisions the AWS Media Services part of the live streaming pipeline.
-
 ### Clean Demo Preparation
 
 For a clean live demonstration, the existing lab infrastructure can be removed first:
