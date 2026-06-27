@@ -18,25 +18,14 @@ FFmpeg-SRT-Caller -> MediaConnect-SRT-Listener -> MediaLive -> MediaPackage V1 -
 - DASH ABR Delivery
 - CloudFormation integration for MediaPackage Origin Endpoints
 
-## Current Status
+## Current Status done
 
-✅ MediaConnect Flow
-
-✅ MediaLive Input
-
-✅ MediaLive Channel
-
-✅ MediaPackage Channel
-
-✅ HLS ABR Playback
-
-✅ DASH ABR Playback
-
-## Future Enhancements
-
-- CloudFront Distribution
-- Monitoring & Alerting
-- Cost Optimization
+- MediaConnect Flow
+- MediaLive Input
+- MediaLive Channel
+- MediaPackage Channel
+- HLS ABR Playback
+- DASH ABR Playback
 
 ## Demo Workflow
 
