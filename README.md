@@ -1,6 +1,8 @@
-# AWS Live Streaming Pipeline via Terraform
+# AWS Media Services Infrastructure as Code (Terraform)
 
-## Overview
+Provision an end-to-end live streaming pipeline using Terraform, including AWS MediaConnect, AWS MediaLive, AWS MediaPackage, IAM resources, and automated runtime configuration generation for the companion observability project.
+
+## Project Overview
 
 This project deploys a complete AWS live streaming workflow using Terraform.
 
@@ -8,38 +10,73 @@ Architecture:
 
 FFmpeg-SRT-Caller -> MediaConnect-SRT-Listener -> MediaLive -> MediaPackage V1 -> HLS(.m3u8)/DASH(.mpd) ABR Endpoints
 
+## Companion Repository
+This repository provisions the AWS infrastructure.
+
+The runtime and observability components are maintained separately in: https://github.com/ihsan314ullah-byte/aws-media-pipeline-observability/tree/main
+
+
+### The deployment workflow is:
+
+    Terraform
+        │
+        ▼
+Provision AWS Media Services
+        │
+        ▼
+Generate runtime .env
+        │
+        ▼
+Copy .env to EC2
+        │
+        ▼
+Start runtime services
+
+### Repository Responsibilities
+
+This repository handles:
+
+✓ MediaConnect
+✓ MediaLive
+✓ MediaPackage
+✓ IAM
+✓ CloudFormation
+✓ Terraform Outputs
+✓ Runtime .env generation
+
+Companion repository handles:
+
+✓ FFmpeg
+✓ FastAPI
+✓ Docker
+✓ Prometheus
+✓ Grafana
+✓ CloudWatch
+✓ JWT
+✓ Role Based Authentication-RBAC
+
 ## Features
 
-- Infrastructure as Code (Terraform)
-- AWS MediaConnect
-- AWS MediaLive
-- AWS MediaPackage V1
-- HLS ABR Delivery
-- DASH ABR Delivery
-- CloudFormation integration for MediaPackage Origin Endpoints
+- Infrastructure as Code using Terraform
+- AWS MediaConnect SRT listener provisioning
+- AWS MediaLive channel provisioning
+- MediaPackage v1 channel and endpoints
+- CloudFormation-managed HLS/DASH endpoints
+- Automatic runtime .env generation
+
 
 ## Current Working Status 
 
-- MediaConnect Flow
-- MediaLive Input
-- MediaLive Channel
-- MediaPackage Channel
-- HLS ABR Playback
-- DASH ABR Playback
+- MediaConnect Flow          ✓
+- MediaLive Input            ✓
+- MediaLive Channel          ✓
+- MediaPackage Channel       ✓
+- HLS ABR Playback           ✓
+- DASH ABR Playback          ✓
 
 ## Demo Workflow
 
 This Terraform project provisions the AWS Media Services part of the live streaming pipeline.
-
-The infrastructure created by this project includes:
-
-* AWS MediaConnect SRT listener flow
-* AWS MediaLive input connected to MediaConnect
-* AWS MediaLive channel for ABR/transcoding workflow
-* AWS MediaPackage v1 channel
-* MediaPackage HLS endpoint
-* MediaPackage DASH endpoint
-* Required IAM roles and permissions
 
 ### Clean Demo Preparation
 
@@ -107,6 +144,8 @@ SRT_TARGET_PORT=<terraform source_ingest_port>
 HLS_URL=<terraform hls_endpoint_url>
 DASH_URL=<terraform dash_endpoint_url>
 ```
+The File: generate-runtime-env.ps1 
+creates the runtime configuration consumed by the companion EC2 repository.
 
 The EC2 runtime project then starts FFmpeg in SRT caller mode and sends the video loop into the Terraform-provisioned AWS MediaConnect listener.
 
