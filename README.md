@@ -6,15 +6,7 @@ This project deploys a complete AWS live streaming workflow using Terraform.
 
 Architecture:
 
-FFmpeg-SRT-Caller
-    ↓
-MediaConnect-SRT-Listener
-    ↓
-MediaLive
-    ↓
-MediaPackage V1
-    ├── HLS ABR Endpoint (.m3u8)
-    └── DASH ABR Endpoint (.mpd)
+FFmpeg-SRT-Caller -> MediaConnect-SRT-Listener -> MediaLive -> MediaPackage V1 -> HLS(.m3u8)/DASH(.mpd) ABR Endpoints
 
 ## Features
 
