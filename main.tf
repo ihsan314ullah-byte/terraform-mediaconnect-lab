@@ -147,7 +147,7 @@ resource "aws_medialive_channel" "channel" {
       }
     }
 
-    # 720p60 rendition
+    # 1080p60 rendition at 4.5Mbps
     video_descriptions {
       name   = "video_720p60"
       width  = 1920
